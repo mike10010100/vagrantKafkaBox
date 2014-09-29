@@ -1,0 +1,26 @@
+---
+# kafkaPlaybook.yml
+- hosts: all
+  user: vagrant
+  sudo: True
+
+  tasks:
+
+    - name: install linux packages
+      action: apt update_cache=yes pkg={{item}} state=installed
+      with_items:
+        - vim
+        - openjdk-7-jdk
+
+    - name: make /usr/local/kafka directory
+      shell: "mkdir /usr/local/kafka"
+
+    - name: download kafka (the link is from an apache mirror)
+      get_url: url=http://apache.spinellicreations.com/kafka/0.8.1.1/kafka-0.8.1.1-src.tgz dest=/usr/local/kafka/kafka-0.8.1.1-src.tgz mode=0440
+
+    - name: untar file
+      shell: "tar -xvf /usr/local/kafka/kafka-0.8.1.1-src.tgz -C /usr/local/kafka"
+
+    - name: build kafka with gradle
+      shell: "cd /usr/local/kafka/kafka-0.8.1.1-src && ./gradlew jar"
+
