@@ -9,13 +9,13 @@ Steve Connelly has a more thoughtful blogpost on this topic: http://www.objectpa
 
 My goal was to get a local Kafka instance running with the minimim of effort. Once the box is provisioned, you can:
 
-1) start zookeeper:
+1. start zookeeper:
     bin/zookeeper-server-start.sh config/zookeeper.properties
-2) start kafka:
+2. start kafka:
     bin/kafka-server-start.sh config/server.properties
-3) start a producer:
+3. start a producer:
     bin/kafka-console-producer.sh --broker-list localhost:9092 --topic test
-4) start a consumer:
+4. start a consumer:
     bin/kafka-console-consumer.sh --zookeeper localhost:2181 --topic test --from-beginning
 
 ... then type something in the producer console, and you'll see it in the consumer console.
