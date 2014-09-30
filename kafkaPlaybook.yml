@@ -11,6 +11,7 @@
       with_items:
         - vim
         - openjdk-7-jdk
+        - python-pip
 
     - name: make /usr/local/kafka directory
       shell: "mkdir /usr/local/kafka"
@@ -24,3 +25,26 @@
     - name: build kafka with gradle
       shell: "cd /usr/local/kafka/kafka-0.8.1.1-src && ./gradlew jar"
 
+    - name: Install pip packages
+      pip: name={{item}} state=present
+      with_items:
+        - kazoo
+        - kafka-python
+
+    - name: Copy zookeeper shell script
+      copy: src=start-single-node-zookeeper.sh dest=/usr/local/kafka/kafka-0.8.1.1-src/start-single-node-zookeeper.sh owner=root group=root mode=755 backup=yes
+
+    - name: Copy zookeeper upstart file
+      copy: src=single-node-zookeeper.conf dest=/etc/init/single-node-zookeeper.conf owner=root group=root mode=644 backup=yes
+
+    - name: Start zookeeper
+      service: name=single-node-zookeeper state=started
+
+    - name: Copy kafka shell script
+      copy: src=start-single-node-kafka.sh dest=/usr/local/kafka/kafka-0.8.1.1-src/start-single-node-kafka.sh owner=root group=root mode=755 backup=yes
+
+    - name: Copy kafka upstart file
+      copy: src=single-node-kafka.conf dest=/etc/init/single-node-kafka.conf owner=root group=root mode=644 backup=yes
+
+    - name: Start kafka
+      service: name=single-node-kafka state=started
