@@ -33,15 +33,15 @@
 
     - name: uncomment the advertised.host.name line
       lineinfile: dest=/usr/local/kafka/kafka-0.8.1.1-src/config/server.properties 
-                  regexp='^#advertised.host.name=localhost'
-                  insertafter='^#advertised.host.name=localhost'
-                  line='#advertised.host.name=localhost'
+                  regexp='^#advertised.host.name=<hostname routable by clients>'
+                  insertafter='^#advertised.host.name=<hostname routable by clients>'
+                  line='advertised.host.name=localhost'
                   state=present
 
     - name: uncomment the advertised.port line
       lineinfile: dest=/usr/local/kafka/kafka-0.8.1.1-src/config/server.properties 
-                  regexp='^#advertised.port=9092'
-                  insertafter='^#advertised.port=9092'
+                  regexp='^#advertised.port=<port accessible by clients>'
+                  insertafter='^#advertised.port=<port accessible by clients>'
                   line='advertised.port=9092'
                   state=present
 
