@@ -32,18 +32,18 @@
         - kafka-python
 
     - name: uncomment the advertised.host.name line
-        lineinfile: dest=/usr/local/kafka/kafka-0.8.1.1-src/config/server.properties 
-                    regexp='^#advertised.host.name=localhost'
-                    insertafter='^#advertised.host.name=localhost'
-                    line='#advertised.host.name=localhost'
-                    state=present
+      lineinfile: dest=/usr/local/kafka/kafka-0.8.1.1-src/config/server.properties 
+                  regexp='^#advertised.host.name=localhost'
+                  insertafter='^#advertised.host.name=localhost'
+                  line='#advertised.host.name=localhost'
+                  state=present
 
     - name: uncomment the advertised.port line
-        lineinfile: dest=/usr/local/kafka/kafka-0.8.1.1-src/config/server.properties 
-                    regexp='^#advertised.port=9092'
-                    insertafter='^#advertised.port=9092'
-                    line='advertised.port=9092'
-                    state=present
+      lineinfile: dest=/usr/local/kafka/kafka-0.8.1.1-src/config/server.properties 
+                  regexp='^#advertised.port=9092'
+                  insertafter='^#advertised.port=9092'
+                  line='advertised.port=9092'
+                  state=present
 
     - name: Copy zookeeper shell script
       copy: src=start-single-node-zookeeper.sh dest=/usr/local/kafka/kafka-0.8.1.1-src/start-single-node-zookeeper.sh owner=root group=root mode=755 backup=yes
