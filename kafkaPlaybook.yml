@@ -14,16 +14,16 @@
         - python-pip
 
     - name: make /usr/local/kafka directory
-      shell: "mkdir /usr/local/kafka"
+      file: path=/usr/local/kafka state=directory
 
     - name: download kafka (the link is from an apache mirror)
-      get_url: url=http://apache.spinellicreations.com/kafka/0.8.1.1/kafka-0.8.1.1-src.tgz dest=/usr/local/kafka/kafka-0.8.1.1-src.tgz mode=0440
+      get_url: url=http://mirror.reverse.net/pub/apache/kafka/{{ kafka_version }}/kafka_{{ scala_version }}-{{ kafka_version }}.tgz dest=/usr/local/kafka/kafka-{{ kafka_version }}.tgz mode=0440
 
     - name: untar file
-      shell: "tar -xvf /usr/local/kafka/kafka-0.8.1.1-src.tgz -C /usr/local/kafka"
+      unarchive: copy=no src=/usr/local/kafka/kafka-{{ kafka_version }}.tgz dest=/usr/local/kafka creates=/usr/local/kafka/kafka-{{ kafka_version }}
 
-    - name: build kafka with gradle
-      shell: "cd /usr/local/kafka/kafka-0.8.1.1-src && ./gradlew jar"
+    - name: rename kafka directory
+      command: creates=/usr/local/kafka/kafka-{{ kafka_version }} mv /usr/local/kafka/kafka_{{ scala_version }}-{{ kafka_version }} /usr/local/kafka/kafka-{{ kafka_version }}
 
     - name: Install pip packages
       pip: name={{item}} state=present
@@ -32,33 +32,37 @@
         - kafka-python
 
     - name: uncomment and set advertised.host.name
-      lineinfile: dest=/usr/local/kafka/kafka-0.8.1.1-src/config/server.properties 
-                  regexp='^#advertised.host.name=<hostname routable by clients>'
+      lineinfile: dest=/usr/local/kafka/kafka-{{ kafka_version }}/config/server.properties
                   insertafter='^#advertised.host.name=<hostname routable by clients>'
-                  line='advertised.host.name=localhost'
+                  line='advertised.host.name=kafka'
+                  state=present
+
+    - name: add kafka to /etc/hosts file
+      lineinfile: dest=/etc/hosts
+                  insertafter='^127\.0\.0\.1\s+localhost$'
+                  line='127.0.0.1\tkafka'
                   state=present
 
     - name: uncomment and set advertised.port line
-      lineinfile: dest=/usr/local/kafka/kafka-0.8.1.1-src/config/server.properties 
-                  regexp='^#advertised.port=<port accessible by clients>'
+      lineinfile: dest=/usr/local/kafka/kafka-{{ kafka_version }}/config/server.properties
                   insertafter='^#advertised.port=<port accessible by clients>'
                   line='advertised.port=9092'
                   state=present
 
     - name: Copy zookeeper shell script
-      copy: src=start-single-node-zookeeper.sh dest=/usr/local/kafka/kafka-0.8.1.1-src/start-single-node-zookeeper.sh owner=root group=root mode=755 backup=yes
+      template: src=start-single-node-zookeeper.sh dest=/usr/local/kafka/kafka-{{ kafka_version }}/start-single-node-zookeeper.sh owner=root group=root mode=755 backup=yes
 
     - name: Copy zookeeper upstart file
-      copy: src=single-node-zookeeper.conf dest=/etc/init/single-node-zookeeper.conf owner=root group=root mode=644 backup=yes
+      template: src=single-node-zookeeper.conf dest=/etc/init/single-node-zookeeper.conf owner=root group=root mode=644 backup=yes
 
     - name: Start zookeeper
       service: name=single-node-zookeeper state=started
 
     - name: Copy kafka shell script
-      copy: src=start-single-node-kafka.sh dest=/usr/local/kafka/kafka-0.8.1.1-src/start-single-node-kafka.sh owner=root group=root mode=755 backup=yes
+      template: src=start-single-node-kafka.sh dest=/usr/local/kafka/kafka-{{ kafka_version }}/start-single-node-kafka.sh owner=root group=root mode=755 backup=yes
 
     - name: Copy kafka upstart file
-      copy: src=single-node-kafka.conf dest=/etc/init/single-node-kafka.conf owner=root group=root mode=644 backup=yes
+      template: src=single-node-kafka.conf dest=/etc/init/single-node-kafka.conf owner=root group=root mode=644 backup=yes
 
     - name: Start kafka
       service: name=single-node-kafka state=started

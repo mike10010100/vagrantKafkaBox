@@ -18,6 +18,10 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   config.vm.provision "ansible" do |ansible|
     ansible.playbook = "kafkaPlaybook.yml"
+    ansible.extra_vars = {
+      kafka_version: "0.8.2.1",
+      scala_version: "2.9.1"
+    }
   end
 
 end
