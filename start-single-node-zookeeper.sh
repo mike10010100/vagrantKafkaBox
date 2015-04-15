@@ -1,2 +1,2 @@
 #!/bin/bash
-./usr/local/kafka/kafka-0.8.1.1-src/bin/zookeeper-server-start.sh /usr/local/kafka/kafka-0.8.1.1-src/config/zookeeper.properties
+./usr/local/kafka/kafka-{{ kafka_version }}/bin/zookeeper-server-start.sh /usr/local/kafka/kafka-{{ kafka_version }}/config/zookeeper.properties
