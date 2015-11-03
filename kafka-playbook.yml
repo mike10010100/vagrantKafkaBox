@@ -34,7 +34,7 @@
     - name: uncomment and set advertised.host.name
       lineinfile: dest=/usr/local/kafka/kafka-{{ kafka_version }}/config/server.properties
                   insertafter='^#advertised.host.name=<hostname routable by clients>'
-                  line='advertised.host.name=kafka'
+                  line='advertised.host.name=localhost'
                   state=present
 
     - name: add kafka to /etc/hosts file
